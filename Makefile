@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Ofast -I$(INC_DIR) -I$(LIBFT_DIR)/include -I$(MLX_DIR)
+CFLAGS = -Wall -Wextra -Werror -Ofast -I$(INC_DIR) -I$(LIBFT_DIR)/include -I$(MLX_DIR) -g3
 LDFLAGS = -L$(LIBFT_DIR) -lft -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 
 _END    = $(shell printf "\033[0m")

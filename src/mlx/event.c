@@ -15,6 +15,7 @@ void	free_map(t_map *map)
 
 int	full_quit(t_wrap *wrap)
 {
+	mlx_destroy_image(wrap->mlx_ptr, wrap->data.img);
 	mlx_destroy_window(wrap->mlx_ptr, wrap->mlx_win);
 	mlx_destroy_display(wrap->mlx_ptr);
 	free(wrap->mlx_ptr);
@@ -26,7 +27,7 @@ int	handle_keypress(int keycode, t_wrap *wrap)
 {
 	if (keycode == KEYCODE_Q || keycode == KEYCODE_ESC)
 		full_quit(wrap);
-	printf("keycode = %d\n", keycode);
+	update_img(wrap);
 	(void) keycode;
 	(void) wrap;
 	return (0);
