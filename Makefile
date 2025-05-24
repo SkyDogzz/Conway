@@ -11,7 +11,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = include
 LIBFT_DIR = libft
-MLX_DIR = minilibx-linux
+MLX_DIR = .minilibx-linux
 LIBFT_GIT = https://github.com/SkyDogzz/ft_ft.git
 MLX_GIT = https://github.com/42paris/minilibx-linux.git
 
