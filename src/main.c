@@ -37,8 +37,8 @@ int main(int argc, char **argv) {
 		if (!read_from_file(&wrap.map, argv[1]))
 			exit(1);
 	} else {
-		printf("Still to implement\n");
-		exit(0);
+		if (!ft_parse_choice(&wrap.map, argv))
+			exit(1);
 	}
 	wrap.mlx_ptr = mlx_init();
 	wrap.mlx_win = mlx_new_window(wrap.mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT, "Window");

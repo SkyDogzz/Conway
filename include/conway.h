@@ -63,6 +63,7 @@ typedef enum e_keycode {
 #define CELL_SIZE 20
 
 bool read_from_file(t_map *map, char *filename);
+bool ft_parse_choice(t_map *map, char **argv);
 
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void update_img(t_wrap *wrap);
@@ -75,5 +76,7 @@ void draw_grid(t_wrap *wrap);
 int	 count_neighbors(t_map *map, int x, int y);
 void next_generation(t_map *map);
 void clear_image(t_data *data);
+
+bool strict_atoi(const char *s, int *result);
 
 #endif

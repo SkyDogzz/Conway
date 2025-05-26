@@ -96,3 +96,15 @@ bool read_from_file(t_map *map, char *filename) {
 	parse_map(map, filename);
 	return (true);
 }
+
+bool ft_parse_choice(t_map *map, char **argv) {
+	int width;
+	int height;
+
+	if (!strict_atoi(argv[1], &width) || !strict_atoi(argv[2], &height))
+		return false;
+	map->height = height;
+	map->width = width;
+	init_map(map);
+	return true;
+}
