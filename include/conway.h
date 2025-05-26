@@ -71,6 +71,9 @@ void update_img(t_wrap *wrap);
 int	 full_quit(t_wrap *wrap);
 int	 handle_keypress(int keycode, t_wrap *wrap);
 int	 handle_keyrelease(int keycode, t_wrap *wrap);
+int	handle_mouse_event(int keycode, int x, int y, t_wrap *wrap);
+void get_grid_size(t_map map, int *height, int *width);
+void get_offsets(t_map map, int height, int width, int *offsetX, int *offsetY);
 void draw_grid(t_wrap *wrap);
 
 int	 count_neighbors(t_map *map, int x, int y);

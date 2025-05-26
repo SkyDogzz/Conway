@@ -49,3 +49,56 @@ int handle_keyrelease(int keycode, t_wrap *wrap) {
 	(void)wrap;
 	return (0);
 }
+
+bool is_in_grid(t_wrap *wrap, int x, int y) {
+	int width;
+	int height;
+	int offsetX;
+	int offsetY;
+
+	get_grid_size(wrap->map, &height, &width);
+	get_offsets(wrap->map, height, width, &offsetX, &offsetY);
+
+	if (x < offsetX / 2 || x > width + offsetX / 2)
+		return (false);
+	else if (y < offsetY / 2 || y > width + offsetY / 2)
+		return (false);
+	return (true);
+}
+
+void get_cell_pos(t_wrap *wrap, int x, int y, t_point *cell) {
+	int width;
+	int height;
+	int offsetX;
+	int offsetY;
+
+	get_grid_size(wrap->map, &height, &width);
+	get_offsets(wrap->map, height, width, &offsetX, &offsetY);
+	x = x - offsetX / 2;
+	y = y - offsetY / 2;
+	cell->x = x / CELL_SIZE;
+	cell->y = y / CELL_SIZE;
+}
+
+void switch_cell(t_wrap *wrap, t_point cell) {
+	if (wrap->map.cell[cell.y][cell.x] == true)
+		wrap->map.cell[cell.y][cell.x] = false;
+	else
+		wrap->map.cell[cell.y][cell.x] = true;
+	clear_image(&wrap->data);
+	draw_grid(wrap);
+	update_img(wrap);
+}
+
+int handle_mouse_event(int keycode, int x, int y, t_wrap *wrap) {
+	t_point cell;
+	if (keycode != 1)
+		return (0);
+	if (!is_in_grid(wrap, x, y)) {
+		return (0);
+	}
+	get_cell_pos(wrap, x, y, &cell);
+	switch_cell(wrap, cell);
+	(void)wrap;
+	return (0);
+}

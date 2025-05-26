@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
 	mlx_hook(wrap.mlx_win, 17, 0, &full_quit, &wrap);
 	mlx_hook(wrap.mlx_win, KeyPress, KeyPressMask, &handle_keypress, &wrap);
 	mlx_hook(wrap.mlx_win, KeyRelease, KeyReleaseMask, &handle_keyrelease, &wrap);
+	mlx_mouse_hook(wrap.mlx_win, handle_mouse_event, &wrap);
 	wrap.auto_mode = false;
 	wrap.auto_speed = 100;
 	mlx_loop_hook(wrap.mlx_ptr, (int (*)(void *))auto_loop_hook, &wrap);
