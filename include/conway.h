@@ -60,7 +60,9 @@ typedef enum e_keycode {
 
 #define WINDOW_WIDTH 1600
 #define WINDOW_HEIGHT 900
-#define CELL_SIZE 20
+#define BLANK_CELL 10
+#define CELL_OFFSET 2
+#define CELL_SIZE 10
 
 bool read_from_file(t_map *map, char *filename);
 bool ft_parse_choice(t_map *map, char **argv);

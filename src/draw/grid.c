@@ -39,8 +39,8 @@ void get_offsets(t_map map, int height, int width, int *offsetX, int *offsetY) {
 }
 
 void fill_cell(t_wrap *wrap, int x, int y, int color) {
-	for (int i = 4; i < CELL_SIZE - 3; i++) {
-		for (int j = 4; j < CELL_SIZE - 3; j++) {
+	for (int i = 1 + CELL_OFFSET; i < CELL_SIZE - CELL_OFFSET; i++) {
+		for (int j = 1 + CELL_OFFSET; j < CELL_SIZE - CELL_OFFSET; j++) {
 			my_mlx_pixel_put(&wrap->data, x + j, y + i, color);
 		}
 	}
