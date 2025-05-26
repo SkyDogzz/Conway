@@ -20,48 +20,52 @@ int get_width(char *line) {
 	return (width);
 }
 
-void get_dim(t_map *map, int fd) {
+void get_dim(t_wrap *wrap, int fd) {
 	char *line;
 
-	map->height = 0;
+	wrap->map.height = 0;
 	line = get_next_line(fd);
-	map->width = get_width(line);
+	wrap->map.width = get_width(line);
 	while (line) {
-		map->height++;
+		wrap->map.height++;
 		free(line);
 		line = get_next_line(fd);
 	}
 	free(line);
 }
 
-void init_map(t_map *map) {
-	size_t i;
-	size_t j;
 
-	map->cell = (bool **)malloc(sizeof(bool *) * map->height);
+void init_map(t_wrap *wrap) {
+	size_t i, j;
+
+	size_t padded_height = wrap->map.height + 2 * wrap->blank_cell;
+	size_t padded_width = wrap->map.width + 2 * wrap->blank_cell;
+
+	wrap->map.cell = (bool **)calloc(padded_height, sizeof(bool *));
 	i = 0;
-	while (i < map->height) {
-		map->cell[i] = (bool *)malloc(sizeof(bool) * map->width);
+	while (i < padded_height) {
+		wrap->map.cell[i] = (bool *)calloc(padded_width, sizeof(bool));
 		j = 0;
-		while (j < map->width) {
-			map->cell[i][j] = false;
+		while (j < padded_width) {
+			wrap->map.cell[i][j] = false;
 			j++;
 		}
 		i++;
 	}
+
+	wrap->map.height = padded_height;
+	wrap->map.width = padded_width;
 }
 
-void fill_line(int width, bool *line, char **split) {
-	int i;
-
-	i = 0;
-	while (i < width && split[i]) {
-		line[i] = ft_atoi(split[i]);
-		i++;
+void fill_line(t_wrap *wrap, int y, char **split) {
+	int x = 0;
+	while (x < wrap->map.width && split[x]) {
+		wrap->map.cell[y][wrap->blank_cell + x] = ft_atoi(split[x]);
+		x++;
 	}
 }
 
-void parse_map(t_map *map, char *filename) {
+void parse_map(t_wrap *wrap, char *filename) {
 	int	   fd;
 	int	   i;
 	char  *line;
@@ -69,10 +73,10 @@ void parse_map(t_map *map, char *filename) {
 
 	fd = open(filename, O_RDONLY);
 	line = get_next_line(fd);
-	i = 0;
+	i = wrap->blank_cell;
 	while (line) {
 		split = ft_split(line, ' ');
-		fill_line(map->width, map->cell[i], split);
+		fill_line(wrap, i, split);
 		free_split(split);
 		free(line);
 		line = get_next_line(fd);
@@ -82,29 +86,27 @@ void parse_map(t_map *map, char *filename) {
 	free(line);
 }
 
-bool read_from_file(t_map *map, char *filename) {
+bool read_from_file(t_wrap *wrap, char *filename) {
 	int fd;
 
 	fd = open(filename, O_RDONLY);
-	if (fd <= 0) {
-		perror("");
+	if (fd <= 0)
 		return (false);
-	}
-	get_dim(map, fd);
+	get_dim(wrap, fd);
 	close(fd);
-	init_map(map);
-	parse_map(map, filename);
+	init_map(wrap);
+	parse_map(wrap, filename);
 	return (true);
 }
 
-bool ft_parse_choice(t_map *map, char **argv) {
+bool ft_parse_choice(t_wrap *wrap, char **argv) {
 	int width;
 	int height;
 
 	if (!strict_atoi(argv[1], &width) || !strict_atoi(argv[2], &height))
 		return false;
-	map->height = height;
-	map->width = width;
-	init_map(map);
+	wrap->map.height = height;
+	wrap->map.width = width;
+	init_map(wrap);
 	return true;
 }

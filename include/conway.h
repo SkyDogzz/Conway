@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include "../.minilibx-linux/mlx.h"
+#include "../libft/include/argp_simple.h"
 #include "../libft/include/libft.h"
 #include "get_next_line.h"
 
@@ -34,10 +35,16 @@ typedef struct s_data {
 } t_data;
 
 typedef struct s_map {
-	size_t width;
-	size_t height;
+	int width;
+	int height;
 	bool **cell;
 } t_map;
+
+#define DEFAULT_WINDOW_WIDTH 1600
+#define DEFAULT_WINDOW_HEIGHT 900
+#define DEFAULT_CELL_SIZE 10
+#define DEFAULT_BLANK_CELL 100
+#define DEFAULT_CELL_OFFSET 1
 
 typedef struct s_wrap {
 	void  *mlx_ptr;
@@ -46,6 +53,11 @@ typedef struct s_wrap {
 	t_map  map;
 	int	   auto_speed;
 	bool   auto_mode;
+	int	   window_width;
+	int	   window_height;
+	int	   cell_size;
+	int	   blank_cell;
+	int	   cell_offset;
 } t_wrap;
 
 typedef enum e_keycode {
@@ -58,29 +70,25 @@ typedef enum e_keycode {
 	KEYCODE_DOWN = 65364
 } t_keycode;
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 900
-#define BLANK_CELL 10
-#define CELL_OFFSET 2
-#define CELL_SIZE 10
 
-bool read_from_file(t_map *map, char *filename);
-bool ft_parse_choice(t_map *map, char **argv);
+bool read_from_file(t_wrap *wrap, char *filename);
+bool ft_parse_choice(t_wrap *wrap, char **argv);
+void init_map(t_wrap *wrap);
 
-void my_mlx_pixel_put(t_data *data, int x, int y, int color);
+void my_mlx_pixel_put(t_wrap *wrap, int x, int y, int color);
 void update_img(t_wrap *wrap);
 
 int	 full_quit(t_wrap *wrap);
 int	 handle_keypress(int keycode, t_wrap *wrap);
 int	 handle_keyrelease(int keycode, t_wrap *wrap);
-int	handle_mouse_event(int keycode, int x, int y, t_wrap *wrap);
-void get_grid_size(t_map map, int *height, int *width);
-void get_offsets(t_map map, int height, int width, int *offsetX, int *offsetY);
+int	 handle_mouse_event(int keycode, int x, int y, t_wrap *wrap);
+void get_grid_size(t_wrap *wrap, int *height, int *width);
+void get_offsets(t_wrap *wrap, int height, int width, int *offsetX, int *offsetY);
 void draw_grid(t_wrap *wrap);
 
 int	 count_neighbors(t_map *map, int x, int y);
 void next_generation(t_map *map);
-void clear_image(t_data *data);
+void clear_image(t_wrap *wrap);
 
 bool strict_atoi(const char *s, int *result);
 

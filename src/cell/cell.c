@@ -19,9 +19,9 @@ int count_neighbors(t_map *map, int x, int y) {
 
 void next_generation(t_map *map) {
 	bool **new_state = malloc(sizeof(bool *) * map->height);
-	for (size_t i = 0; i < map->height; i++) {
+	for (int i = 0; i < map->height; i++) {
 		new_state[i] = malloc(sizeof(bool) * map->width);
-		for (size_t j = 0; j < map->width; j++) {
+		for (int j = 0; j < map->width; j++) {
 			int neighbors = count_neighbors(map, j, i);
 			if (map->cell[i][j])
 				new_state[i][j] = (neighbors == 2 || neighbors == 3);
@@ -29,8 +29,8 @@ void next_generation(t_map *map) {
 				new_state[i][j] = (neighbors == 3);
 		}
 	}
-	for (size_t i = 0; i < map->height; i++) {
-		for (size_t j = 0; j < map->width; j++)
+	for (int i = 0; i < map->height; i++) {
+		for (int j = 0; j < map->width; j++)
 			map->cell[i][j] = new_state[i][j];
 		free(new_state[i]);
 	}

@@ -1,7 +1,7 @@
 #include "../../include/conway.h"
 
 void free_map(t_map *map) {
-	size_t i;
+	int i;
 
 	i = 0;
 	while (i < map->height) {
@@ -31,7 +31,7 @@ int handle_keypress(int keycode, t_wrap *wrap) {
 		wrap->auto_speed *= 1.1;
 	}
 	if (keycode == KEYCODE_SPACE) {
-		clear_image(&wrap->data);
+		clear_image(wrap);
 		next_generation(&wrap->map);
 		draw_grid(wrap);
 		update_img(wrap);
@@ -54,8 +54,8 @@ bool is_in_grid(t_wrap *wrap, int x, int y) {
 	int offsetX;
 	int offsetY;
 
-	get_grid_size(wrap->map, &height, &width);
-	get_offsets(wrap->map, height, width, &offsetX, &offsetY);
+	get_grid_size(wrap, &height, &width);
+	get_offsets(wrap, height, width, &offsetX, &offsetY);
 
 	if (x < offsetX / 2 || x > width + offsetX / 2)
 		return (false);
@@ -70,12 +70,12 @@ void get_cell_pos(t_wrap *wrap, int x, int y, t_point *cell) {
 	int offsetX;
 	int offsetY;
 
-	get_grid_size(wrap->map, &height, &width);
-	get_offsets(wrap->map, height, width, &offsetX, &offsetY);
+	get_grid_size(wrap, &height, &width);
+	get_offsets(wrap, height, width, &offsetX, &offsetY);
 	x = x - offsetX / 2;
 	y = y - offsetY / 2;
-	cell->x = x / CELL_SIZE;
-	cell->y = y / CELL_SIZE;
+	cell->x = x / wrap->cell_size;
+	cell->y = y / wrap->cell_size;
 }
 
 void switch_cell(t_wrap *wrap, t_point cell) {
@@ -83,7 +83,7 @@ void switch_cell(t_wrap *wrap, t_point cell) {
 		wrap->map.cell[cell.y][cell.x] = false;
 	else
 		wrap->map.cell[cell.y][cell.x] = true;
-	clear_image(&wrap->data);
+	clear_image(wrap);
 	draw_grid(wrap);
 	update_img(wrap);
 }

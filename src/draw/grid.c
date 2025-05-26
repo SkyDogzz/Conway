@@ -14,7 +14,7 @@ void draw_line(t_wrap *wrap, t_line line, int color) {
 		int y_start = line.p1.y < line.p2.y ? line.p1.y : line.p2.y;
 		int y_end = line.p1.y > line.p2.y ? line.p1.y : line.p2.y;
 		for (int y = y_start; y <= y_end; y++)
-			my_mlx_pixel_put(&wrap->data, line.p1.x, y, color);
+			my_mlx_pixel_put(wrap, line.p1.x, y, color);
 		return;
 	}
 
@@ -22,26 +22,33 @@ void draw_line(t_wrap *wrap, t_line line, int color) {
 	x = line.p1.x;
 	while (x <= line.p2.x) {
 		y = m * (x - line.p1.x) + line.p1.y;
-		my_mlx_pixel_put(&wrap->data, x, (int)y, color);
+		my_mlx_pixel_put(wrap, x, (int)y, color);
 		x++;
 	}
 }
 
-void get_grid_size(t_map map, int *height, int *width) {
-	*height = map.height * CELL_SIZE;
-	*width = map.width * CELL_SIZE;
+void get_grid_size(t_wrap *wrap, int *height, int *width) {
+	*height = wrap->map.height * wrap->cell_size;
+	*width = wrap->map.width * wrap->cell_size;
 }
 
-void get_offsets(t_map map, int height, int width, int *offsetX, int *offsetY) {
-	*offsetX = WINDOW_WIDTH - width;
-	*offsetY = WINDOW_HEIGHT - height;
-	(void)map;
+void get_offsets(t_wrap *wrap, int height, int width, int *offsetX, int *offsetY) {
+	*offsetX = wrap->window_width - width;
+	*offsetY = wrap->window_height - height;
 }
 
 void fill_cell(t_wrap *wrap, int x, int y, int color) {
-	for (int i = 1 + CELL_OFFSET; i < CELL_SIZE - CELL_OFFSET; i++) {
-		for (int j = 1 + CELL_OFFSET; j < CELL_SIZE - CELL_OFFSET; j++) {
-			my_mlx_pixel_put(&wrap->data, x + j, y + i, color);
+	if (wrap->cell_size <= 5) {
+		for (int i = 1; i < wrap->cell_size; i++) {
+			for (int j = 1; j < wrap->cell_size; j++) {
+				my_mlx_pixel_put(wrap, x + j, y + i, color);
+			}
+		}
+	} else {
+		for (int i = 1 + wrap->cell_offset; i < wrap->cell_size - wrap->cell_offset; i++) {
+			for (int j = 1 + wrap->cell_offset; j < wrap->cell_size - wrap->cell_offset; j++) {
+				my_mlx_pixel_put(wrap, x + j, y + i, color);
+			}
 		}
 	}
 }
@@ -53,31 +60,33 @@ void draw_grid(t_wrap *wrap) {
 	int	   offsetY;
 	t_line line;
 
-	get_grid_size(wrap->map, &height, &width);
-	get_offsets(wrap->map, height, width, &offsetX, &offsetY);
+	get_grid_size(wrap, &height, &width);
+	get_offsets(wrap, height, width, &offsetX, &offsetY);
 
-	for (size_t i = 0; i < wrap->map.height; i++) {
-		for (size_t j = 0; j < wrap->map.width; j++) {
-			int x = offsetX / 2 + j * CELL_SIZE;
-			int y = offsetY / 2 + i * CELL_SIZE;
+	for (int i = 0; i < wrap->map.height; i++) {
+		for (int j = 0; j < wrap->map.width; j++) {
+			int x = offsetX / 2 + j * wrap->cell_size;
+			int y = offsetY / 2 + i * wrap->cell_size;
 			if (wrap->map.cell[i][j])
 				fill_cell(wrap, x, y, 0xF0F0F0);
 		}
 	}
 
-	for (size_t j = 0; j <= wrap->map.width; j++) {
-		line.p1.x = offsetX / 2 + j * CELL_SIZE;
-		line.p2.x = line.p1.x;
-		line.p1.y = offsetY / 2;
-		line.p2.y = offsetY / 2 + height;
-		draw_line(wrap, line, 0xA0A0A0);
-	}
+	if (wrap->cell_size > 5) {
+		for (int j = 0; j <= wrap->map.width; j++) {
+			line.p1.x = offsetX / 2 + j * wrap->cell_size;
+			line.p2.x = line.p1.x;
+			line.p1.y = offsetY / 2;
+			line.p2.y = offsetY / 2 + height;
+			draw_line(wrap, line, 0xA0A0A0);
+		}
 
-	for (size_t i = 0; i <= wrap->map.height; i++) {
-		line.p1.y = offsetY / 2 + i * CELL_SIZE;
-		line.p2.y = line.p1.y;
-		line.p1.x = offsetX / 2;
-		line.p2.x = offsetX / 2 + width;
-		draw_line(wrap, line, 0xA0A0A0);
+		for (int i = 0; i <= wrap->map.height; i++) {
+			line.p1.y = offsetY / 2 + i * wrap->cell_size;
+			line.p2.y = line.p1.y;
+			line.p1.x = offsetX / 2;
+			line.p2.x = offsetX / 2 + width;
+			draw_line(wrap, line, 0xA0A0A0);
+		}
 	}
 }
