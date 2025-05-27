@@ -92,6 +92,7 @@ int main(int argc, char **argv) {
 	wrap.target_fps = DEFAULT_TARGET_FPS;
 	wrap.display_grid = DEFAULT_DISPLAY_GRID;
 	wrap.run = false;
+	wrap.random = false;
 
 	int i = 0;
 
@@ -127,6 +128,8 @@ int main(int argc, char **argv) {
 		} else if (argp[i]->type == ARG_BOOL) {
 			if (ft_strcmp(argp[i]->value.as_bool.key, "--no-grid") == 0)
 				wrap.display_grid = false;
+			else if (ft_strcmp(argp[i]->value.as_bool.key, "--random") == 0)
+				wrap.random = true;
 			else {
 				display_help();
 				free_argp(argp);
@@ -150,6 +153,14 @@ int main(int argc, char **argv) {
 			wrap.map.height = size;
 			wrap.map.width = size;
 			init_map(&wrap);
+			if (wrap.random) {
+				srand(time(NULL));
+				for (int y = wrap.blank_cell; y < wrap.map.height - wrap.blank_cell; y++) {
+					for (int x = wrap.blank_cell; x < wrap.map.width - wrap.blank_cell; x++) {
+						wrap.map.cell[y][x] = rand() % 2;
+					}
+				}
+			}
 			wrap.run = true;
 			break;
 		} else {

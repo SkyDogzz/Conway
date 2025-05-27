@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <sys/time.h>
 
 #include "../.minilibx-linux/mlx.h"
@@ -64,6 +65,7 @@ typedef struct s_wrap {
 	int	   blank_cell;
 	int	   cell_offset;
 	bool   display_grid;
+	bool   random;
 } t_wrap;
 
 typedef enum e_keycode {
@@ -82,6 +84,7 @@ typedef struct s_option {
 } t_option;
 
 static t_option OPTION[] = {{"--help", "Display this help message"},
+							{"--random", "Randomize cell placement"},
 							{"--no-grid", "Hide the grid overlay"},
 							{"--window-width=SIZE", "Set the window width to SIZE (in pixels)"},
 							{"--window-height=SIZE", "Set the window height to SIZE (in pixels)"},
