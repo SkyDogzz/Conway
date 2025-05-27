@@ -39,14 +39,14 @@ void get_offsets(t_wrap *wrap, int height, int width, int *offsetX, int *offsetY
 
 void fill_cell(t_wrap *wrap, int x, int y, int color) {
 	if (wrap->cell_size <= 5) {
-		for (int i = 1; i < wrap->cell_size; i++) {
-			for (int j = 1; j < wrap->cell_size; j++) {
+		for (int i = 1; i <= wrap->cell_size; i++) {
+			for (int j = 1; j <= wrap->cell_size; j++) {
 				my_mlx_pixel_put(wrap, x + j, y + i, color);
 			}
 		}
 	} else {
-		for (int i = wrap->cell_offset; i <= wrap->cell_size - wrap->cell_offset; i++) {
-			for (int j = wrap->cell_offset; j <= wrap->cell_size - wrap->cell_offset; j++) {
+		for (int i = wrap->cell_offset; i <= wrap->cell_size - wrap->cell_offset + 1; i++) {
+			for (int j = wrap->cell_offset; j <= wrap->cell_size - wrap->cell_offset + 1; j++) {
 				my_mlx_pixel_put(wrap, x + j, y + i, color);
 			}
 		}

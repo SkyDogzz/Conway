@@ -119,9 +119,23 @@ int main(int argc, char **argv) {
 				wrap.cell_offset = argp[i]->value.as_int.value;
 			else if (ft_strcmp(argp[i]->value.as_int.key, "--target-fps") == 0)
 				wrap.target_fps = argp[i]->value.as_int.value;
+			else {
+				display_help();
+				free_argp(argp);
+				return (0);
+			}
 		} else if (argp[i]->type == ARG_BOOL) {
 			if (ft_strcmp(argp[i]->value.as_bool.key, "--no-grid") == 0)
 				wrap.display_grid = false;
+			else {
+				display_help();
+				free_argp(argp);
+				return (0);
+			}
+		} else {
+			display_help();
+			free_argp(argp);
+			return (0);
 		}
 		i++;
 	}
