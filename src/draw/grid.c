@@ -45,8 +45,8 @@ void fill_cell(t_wrap *wrap, int x, int y, int color) {
 			}
 		}
 	} else {
-		for (int i = 1 + wrap->cell_offset; i < wrap->cell_size - wrap->cell_offset; i++) {
-			for (int j = 1 + wrap->cell_offset; j < wrap->cell_size - wrap->cell_offset; j++) {
+		for (int i = wrap->cell_offset; i <= wrap->cell_size - wrap->cell_offset; i++) {
+			for (int j = wrap->cell_offset; j <= wrap->cell_size - wrap->cell_offset; j++) {
 				my_mlx_pixel_put(wrap, x + j, y + i, color);
 			}
 		}
@@ -71,6 +71,9 @@ void draw_grid(t_wrap *wrap) {
 				fill_cell(wrap, x, y, 0xF0F0F0);
 		}
 	}
+
+	if (!wrap->display_grid)
+		return ;
 
 	if (wrap->cell_size > 5) {
 		for (int j = 0; j <= wrap->map.width; j++) {

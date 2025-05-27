@@ -5,60 +5,104 @@ void exit_with_error(const char *err, const int code) {
 	exit(code);
 }
 
+void draw_fps(t_wrap *wrap, int *y) {
+	char fps_str[32];
+
+	sprintf(fps_str, "Framerate max: %d", wrap->target_fps);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, *y += 15, 0xFFFFFF, fps_str);
+	sprintf(fps_str, "FPS: %d", wrap->real_fps);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, *y += 15, 0xFFFFFF, fps_str);
+}
+/**/
+/*void draw_control(t_wrap *wrap, int *y)*/
+/*{*/
+/*	char str[32];*/
+/*}*/
+
+void draw_info(t_wrap *wrap) {
+	int y = 20;
+	draw_fps(wrap, &y);
+}
+
 int auto_loop_hook(t_wrap *wrap) {
-	static int frame = 0;
-	static int prev_speed = 0;
+	static struct timeval last_time = {0};
+	static struct timeval last_fps_check = {0};
+	static int			  frame_count = 0;
+
+	struct timeval current_time;
+	double		   elapsed;
+	double		   frame_delay;
+	double		   fps_elapsed;
 
 	if (!wrap->auto_mode)
-		return (0);
+		return 0;
 
-	if (wrap->auto_speed != prev_speed) {
-		frame = 0;
-		prev_speed = wrap->auto_speed;
+	gettimeofday(&current_time, NULL);
+
+	elapsed = (current_time.tv_sec - last_time.tv_sec) + (current_time.tv_usec - last_time.tv_usec) / 1000000.0;
+
+	frame_delay = 1.0 / wrap->target_fps;
+
+	if (elapsed >= frame_delay) {
+		last_time = current_time;
+		clear_image(wrap);
+		next_generation(&wrap->map);
+		draw_grid(wrap);
+		update_img(wrap);
+		draw_info(wrap);
+		frame_count++;
 	}
 
-	if (++frame < wrap->auto_speed)
-		return (0);
+	fps_elapsed =
+		(current_time.tv_sec - last_fps_check.tv_sec) + (current_time.tv_usec - last_fps_check.tv_usec) / 1000000.0;
+	if (fps_elapsed >= 1.0) {
+		wrap->real_fps = frame_count;
+		frame_count = 0;
+		last_fps_check = current_time;
+	}
+	return 0;
+}
 
-	frame = 0;
-	clear_image(wrap);
-	next_generation(&wrap->map);
-	draw_grid(wrap);
-	update_img(wrap);
-	return (0);
+void display_help(void) {
+	int i;
+
+	i = 0;
+	printf("Usage: ./conway map | size [OPTION]...\n");
+	while (OPTION[i].name != NULL) {
+		printf("%-30s %s\n", OPTION[i].name, OPTION[i].description);
+		i++;
+	}
 }
 
 int main(int argc, char **argv) {
 	t_wrap			  wrap;
 	t_arg_container **argp;
 
-	argp = parse_argp(argc, argv);
-	int i = 0;
-	while (argp[i]) {
-		if (argp[i]->type == ARG_STR) {
-			if (ft_strcmp(argp[i]->value.as_str.key, "--map") == 0) {
-				if (!read_from_file(&wrap, argp[i]->value.as_str.value))
-				{
-					free_argp(argp);
-					exit_with_error(strerror(errno), 1);
-				}
-				break;
-			}
-		} else if (argp[i]->type == ARG_INT) {
-			if (ft_strcmp(argp[i]->value.as_int.key, "--size") == 0) {
-				wrap.map.height = argp[i]->value.as_int.value;
-				wrap.map.width = argp[i]->value.as_int.value;
-				init_map(&wrap);
-				break;
-			}
-		}
-		i++;
+	if (argc == 1) {
+		display_help();
+		return (0);
 	}
+	argp = parse_argp(argc, argv);
+
 	wrap.window_width = DEFAULT_WINDOW_WIDTH;
 	wrap.window_height = DEFAULT_WINDOW_HEIGHT;
 	wrap.cell_size = DEFAULT_CELL_SIZE;
 	wrap.blank_cell = DEFAULT_BLANK_CELL;
 	wrap.cell_offset = DEFAULT_CELL_OFFSET;
+	wrap.target_fps = DEFAULT_TARGET_FPS;
+	wrap.display_grid = DEFAULT_DISPLAY_GRID;
+	wrap.run = false;
+
+	int i = 0;
+
+	while (argp[i]) {
+		if (argp[i]->type == ARG_BOOL && ft_strcmp(argp[i]->value.as_bool.key, "--help") == 0) {
+			display_help();
+			free_argp(argp);
+			return (0);
+		}
+		i++;
+	}
 
 	i = 0;
 	while (argp[i]) {
@@ -73,10 +117,42 @@ int main(int argc, char **argv) {
 				wrap.blank_cell = argp[i]->value.as_int.value;
 			else if (ft_strcmp(argp[i]->value.as_int.key, "--cell-offset") == 0)
 				wrap.cell_offset = argp[i]->value.as_int.value;
+			else if (ft_strcmp(argp[i]->value.as_int.key, "--target-fps") == 0)
+				wrap.target_fps = argp[i]->value.as_int.value;
+		} else if (argp[i]->type == ARG_BOOL) {
+			if (ft_strcmp(argp[i]->value.as_bool.key, "--no-grid") == 0)
+				wrap.display_grid = false;
 		}
 		i++;
 	}
+
+	i = 1;
+	while (i < argc) {
+		int size;
+
+		if (argv[i][0] == '-')
+			i++;
+		else if (strict_atoi(argv[i], &size)) {
+			wrap.map.height = size;
+			wrap.map.width = size;
+			init_map(&wrap);
+			wrap.run = true;
+			break;
+		} else {
+			if (!read_from_file(&wrap, argv[i])) {
+				free_argp(argp);
+				exit_with_error(strerror(errno), 1);
+			}
+			wrap.run = true;
+			break;
+		}
+	}
+
 	free_argp(argp);
+	if (!wrap.run) {
+		display_help();
+		return (0);
+	}
 	wrap.mlx_ptr = mlx_init();
 	wrap.mlx_win = mlx_new_window(wrap.mlx_ptr, wrap.window_width, wrap.window_height, "Window");
 	mlx_hook(wrap.mlx_win, 17, 0, &full_quit, &wrap);
@@ -84,7 +160,6 @@ int main(int argc, char **argv) {
 	mlx_hook(wrap.mlx_win, KeyRelease, KeyReleaseMask, &handle_keyrelease, &wrap);
 	mlx_mouse_hook(wrap.mlx_win, handle_mouse_event, &wrap);
 	wrap.auto_mode = false;
-	wrap.auto_speed = 100;
 	mlx_loop_hook(wrap.mlx_ptr, (int (*)(void *))auto_loop_hook, &wrap);
 	wrap.data.img = mlx_new_image(wrap.mlx_ptr, wrap.window_width, wrap.window_height);
 	wrap.data.addr =

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 #include "../.minilibx-linux/mlx.h"
 #include "../libft/include/argp_simple.h"
@@ -35,8 +36,8 @@ typedef struct s_data {
 } t_data;
 
 typedef struct s_map {
-	int width;
-	int height;
+	int	   width;
+	int	   height;
 	bool **cell;
 } t_map;
 
@@ -45,19 +46,24 @@ typedef struct s_map {
 #define DEFAULT_CELL_SIZE 10
 #define DEFAULT_BLANK_CELL 100
 #define DEFAULT_CELL_OFFSET 1
+#define DEFAULT_TARGET_FPS 10
+#define DEFAULT_DISPLAY_GRID 1
 
 typedef struct s_wrap {
 	void  *mlx_ptr;
 	void  *mlx_win;
 	t_data data;
 	t_map  map;
-	int	   auto_speed;
+	bool   run;
+	int	   target_fps;
+	int	   real_fps;
 	bool   auto_mode;
 	int	   window_width;
 	int	   window_height;
 	int	   cell_size;
 	int	   blank_cell;
 	int	   cell_offset;
+	bool   display_grid;
 } t_wrap;
 
 typedef enum e_keycode {
@@ -70,6 +76,20 @@ typedef enum e_keycode {
 	KEYCODE_DOWN = 65364
 } t_keycode;
 
+typedef struct s_option {
+	char *name;
+	char *description;
+} t_option;
+
+static t_option OPTION[] = {{"--help", "Display this help message"},
+							{"--no-grid", "Hide the grid overlay"},
+							{"--window-width=SIZE", "Set the window width to SIZE (in pixels)"},
+							{"--window-height=SIZE", "Set the window height to SIZE (in pixels)"},
+							{"--cell-size=SIZE", "Set the size of each cell in pixels"},
+							{"--blank-cell=VALUE", "Set the value representing an empty cell"},
+							{"--cell-offset=VALUE", "Set the space between cells (in pixels)"},
+							{"--target-fps=FPS", "Set the target frames per second"},
+							{0}};
 
 bool read_from_file(t_wrap *wrap, char *filename);
 bool ft_parse_choice(t_wrap *wrap, char **argv);

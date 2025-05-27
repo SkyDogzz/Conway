@@ -23,13 +23,10 @@ int full_quit(t_wrap *wrap) {
 int handle_keypress(int keycode, t_wrap *wrap) {
 	if (keycode == KEYCODE_Q || keycode == KEYCODE_ESC)
 		full_quit(wrap);
-	if (keycode == KEYCODE_LEFT && wrap->auto_speed > 1) {
-		if (wrap->auto_speed > 100)
-			wrap->auto_speed /= 1.1;
-	}
-	if (keycode == KEYCODE_RIGHT) {
-		wrap->auto_speed *= 1.1;
-	}
+	if (keycode == KEYCODE_LEFT && wrap->target_fps > 1)
+		wrap->target_fps--;
+	if (keycode == KEYCODE_RIGHT)
+		wrap->target_fps++;
 	if (keycode == KEYCODE_SPACE) {
 		clear_image(wrap);
 		next_generation(&wrap->map);
