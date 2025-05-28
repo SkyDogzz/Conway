@@ -54,9 +54,9 @@ bool is_in_grid(t_wrap *wrap, int x, int y) {
 	get_grid_size(wrap, &height, &width);
 	get_offsets(wrap, height, width, &offsetX, &offsetY);
 
-	if (x < offsetX / 2 || x > width + offsetX / 2)
+	if (x < offsetX / 2 || x >= width + offsetX / 2)
 		return (false);
-	else if (y < offsetY / 2 || y > width + offsetY / 2)
+	else if (y < offsetY / 2 || y >= height + offsetY / 2)
 		return (false);
 	return (true);
 }

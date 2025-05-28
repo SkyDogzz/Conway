@@ -13,11 +13,6 @@ void draw_fps(t_wrap *wrap, int *y) {
 	sprintf(fps_str, "FPS: %d", wrap->real_fps);
 	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, *y += 15, 0xFFFFFF, fps_str);
 }
-/**/
-/*void draw_control(t_wrap *wrap, int *y)*/
-/*{*/
-/*	char str[32];*/
-/*}*/
 
 void draw_info(t_wrap *wrap) {
 	int y = 20;
@@ -93,6 +88,7 @@ int main(int argc, char **argv) {
 	wrap.display_grid = DEFAULT_DISPLAY_GRID;
 	wrap.run = false;
 	wrap.random = false;
+	wrap.real_fps = 0;
 
 	int i = 0;
 
