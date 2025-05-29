@@ -33,8 +33,8 @@ void get_grid_size(t_wrap *wrap, int *height, int *width) {
 }
 
 void get_offsets(t_wrap *wrap, int height, int width, int *offsetX, int *offsetY) {
-	*offsetX = wrap->window_width - width;
-	*offsetY = wrap->window_height - height;
+	*offsetX = wrap->window_width - width + wrap->offset_x;
+	*offsetY = wrap->window_height - height + wrap->offset_y;
 }
 
 void fill_cell(t_wrap *wrap, int x, int y, int color) {

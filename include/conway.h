@@ -68,6 +68,8 @@ typedef struct s_wrap {
 	bool   display_grid;
 	bool   random;
 	bool   heatmap;
+	int	   offset_x;
+	int	   offset_y;
 } t_wrap;
 
 typedef enum e_keycode {

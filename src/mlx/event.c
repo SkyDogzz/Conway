@@ -23,19 +23,29 @@ int full_quit(t_wrap *wrap) {
 int handle_keypress(int keycode, t_wrap *wrap) {
 	if (keycode == KEYCODE_Q || keycode == KEYCODE_ESC)
 		full_quit(wrap);
-	if (keycode == KEYCODE_LEFT && wrap->target_fps > 1)
+	else if (keycode == KEYCODE_LEFT && wrap->target_fps > 1)
 		wrap->target_fps--;
-	if (keycode == KEYCODE_RIGHT)
+	else if (keycode == KEYCODE_RIGHT)
 		wrap->target_fps++;
-	if (keycode == KEYCODE_SPACE) {
-		clear_image(wrap);
+	else if (keycode == KEYCODE_SPACE)
 		next_generation(&wrap->map);
-		draw_grid(wrap);
-		update_img(wrap);
-	}
-	if (keycode == 'a') {
+	else if (keycode == 'a')
 		wrap->auto_mode = !wrap->auto_mode;
-	}
+	else if (keycode == 'h')
+		wrap->offset_x -= 5;
+	else if (keycode == 'l')
+		wrap->offset_x += 5;
+	else if (keycode == 'k')
+		wrap->offset_y -= 5;
+	else if (keycode == 'j')
+		wrap->offset_y += 5;
+	else if (keycode == KEYCODE_UP && wrap->cell_size < 100)
+		wrap->cell_size++;
+	else if (keycode == KEYCODE_DOWN && wrap->cell_size > 1)
+		wrap->cell_size--;
+	clear_image(wrap);
+	draw_grid(wrap);
+	update_img(wrap);
 	return (0);
 }
 

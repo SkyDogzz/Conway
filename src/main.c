@@ -90,6 +90,8 @@ int main(int argc, char **argv) {
 	wrap.random = false;
 	wrap.real_fps = 0;
 	wrap.heatmap = false;
+	wrap.offset_x = 0;
+	wrap.offset_y = 0;
 
 	int i = 0;
 
