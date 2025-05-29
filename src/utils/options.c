@@ -2,6 +2,7 @@
 
 t_option OPTION[] = {{"--help", "Display this help message"},
 					 {"--random", "Randomize cell placement"},
+					 {"--heatmap", "Color cells based on neighbor count"},
 					 {"--no-grid", "Hide the grid overlay"},
 					 {"--window-width", "Set the window width to SIZE (px)"},
 					 {"--window-height", "Set the window height to SIZE (px)"},

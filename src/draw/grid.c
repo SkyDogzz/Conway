@@ -53,6 +53,19 @@ void fill_cell(t_wrap *wrap, int x, int y, int color) {
 	}
 }
 
+int get_heatmap_color(int neighbors) {
+	if (neighbors < 0)
+		neighbors = 0;
+	if (neighbors > 8)
+		neighbors = 8;
+
+	int r = (255 * neighbors) / 8;
+	int g = 0;
+	int b = (255 * (8 - neighbors)) / 8;
+
+	return (r << 16) | (g << 8) | b;
+}
+
 void draw_grid(t_wrap *wrap) {
 	int	   height;
 	int	   width;
@@ -67,13 +80,21 @@ void draw_grid(t_wrap *wrap) {
 		for (int j = 0; j < wrap->map.width; j++) {
 			int x = offsetX / 2 + j * wrap->cell_size;
 			int y = offsetY / 2 + i * wrap->cell_size;
-			if (wrap->map.cell[i][j])
-				fill_cell(wrap, x, y, 0xF0F0F0);
+			if (wrap->map.cell[i][j]) {
+				if (wrap->map.cell[i][j]) {
+					int color = 0xF0F0F0;
+					if (wrap->heatmap) {
+						int neighbors = count_neighbors(&wrap->map, j, i);
+						color = get_heatmap_color(neighbors);
+					}
+					fill_cell(wrap, x, y, color);
+				}
+			}
 		}
 	}
 
 	if (!wrap->display_grid)
-		return ;
+		return;
 
 	if (wrap->cell_size > 5) {
 		for (int j = 0; j <= wrap->map.width; j++) {

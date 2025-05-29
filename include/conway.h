@@ -4,13 +4,13 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/keysym.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <X11/keysym.h>
 #include <sys/time.h>
 #include <time.h>
 
@@ -67,6 +67,7 @@ typedef struct s_wrap {
 	int	   cell_offset;
 	bool   display_grid;
 	bool   random;
+	bool   heatmap;
 } t_wrap;
 
 typedef enum e_keycode {

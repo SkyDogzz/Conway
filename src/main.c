@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
 	wrap.run = false;
 	wrap.random = false;
 	wrap.real_fps = 0;
+	wrap.heatmap = false;
 
 	int i = 0;
 
@@ -126,6 +127,8 @@ int main(int argc, char **argv) {
 				wrap.display_grid = false;
 			else if (ft_strcmp(argp[i]->value.as_bool.key, "--random") == 0)
 				wrap.random = true;
+			else if (ft_strcmp(argp[i]->value.as_bool.key, "--heatmap") == 0)
+				wrap.heatmap = true;
 			else {
 				display_help();
 				free_argp(argp);
