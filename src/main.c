@@ -5,18 +5,25 @@ void exit_with_error(const char *err, const int code) {
 	exit(code);
 }
 
-void draw_fps(t_wrap *wrap, int *y) {
-	char fps_str[32];
-
-	sprintf(fps_str, "Framerate max: %d", wrap->target_fps);
-	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, *y += 15, 0xFFFFFF, fps_str);
-	sprintf(fps_str, "FPS: %d", wrap->real_fps);
-	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, *y += 15, 0xFFFFFF, fps_str);
-}
 
 void draw_info(t_wrap *wrap) {
 	int y = 20;
-	draw_fps(wrap, &y);
+	char str[64];
+
+	sprintf(str, "Framerate max: %d", wrap->target_fps);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "FPS: %d", wrap->real_fps);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "Grid: %d x %d", wrap->map.width, wrap->map.height);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "Cell size: %d", wrap->cell_size);
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "Heatmap: %s", wrap->heatmap ? "ON" : "OFF");
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "Auto mode: %s", wrap->auto_mode ? "ON" : "OFF");
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
+	sprintf(str, "Grid overlay: %s", wrap->display_grid ? "ON" : "OFF");
+	mlx_string_put(wrap->mlx_ptr, wrap->mlx_win, 20, y += 15, 0xFFFFFF, str);
 }
 
 int auto_loop_hook(t_wrap *wrap) {
@@ -30,7 +37,10 @@ int auto_loop_hook(t_wrap *wrap) {
 	double		   fps_elapsed;
 
 	if (!wrap->auto_mode)
+	{
+		draw_info(wrap);
 		return 0;
+	}
 
 	gettimeofday(&current_time, NULL);
 
@@ -59,12 +69,20 @@ int auto_loop_hook(t_wrap *wrap) {
 }
 
 void display_help(void) {
-	int i;
+	int i = 0;
 
-	i = 0;
-	printf("Usage: ./conway map | size [OPTION]...\n");
+	printf("Conway's Game of Life - Available Options\n");
+	printf("Usage:\n");
+	printf("  ./conway map_file.txt [OPTIONS...]\n");
+	printf("  ./conway size [OPTIONS...]\n\n");
+
+	printf("Examples:\n");
+	printf("  ./conway 50 --random --heatmap\n");
+	printf("  ./conway pattern.txt --no-grid --cell-size 8\n\n");
+
+	printf("Options:\n");
 	while (OPTION[i].name != NULL) {
-		printf("%-30s %s\n", OPTION[i].name, OPTION[i].description);
+		printf("  %-20s %s\n", OPTION[i].name, OPTION[i].description);
 		i++;
 	}
 }
