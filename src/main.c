@@ -5,9 +5,8 @@ void exit_with_error(const char *err, const int code) {
 	exit(code);
 }
 
-
 void draw_info(t_wrap *wrap) {
-	int y = 20;
+	int	 y = 20;
 	char str[64];
 
 	sprintf(str, "Framerate max: %d", wrap->target_fps);
@@ -36,8 +35,7 @@ int auto_loop_hook(t_wrap *wrap) {
 	double		   frame_delay;
 	double		   fps_elapsed;
 
-	if (!wrap->auto_mode)
-	{
+	if (!wrap->auto_mode) {
 		draw_info(wrap);
 		return 0;
 	}
@@ -110,6 +108,7 @@ int main(int argc, char **argv) {
 	wrap.heatmap = false;
 	wrap.offset_x = 0;
 	wrap.offset_y = 0;
+	wrap.left_button = false;
 
 	int i = 0;
 
@@ -202,7 +201,9 @@ int main(int argc, char **argv) {
 	mlx_hook(wrap.mlx_win, 17, 0, &full_quit, &wrap);
 	mlx_hook(wrap.mlx_win, KeyPress, KeyPressMask, &handle_keypress, &wrap);
 	mlx_hook(wrap.mlx_win, KeyRelease, KeyReleaseMask, &handle_keyrelease, &wrap);
-	mlx_mouse_hook(wrap.mlx_win, handle_mouse_event, &wrap);
+	mlx_hook(wrap.mlx_win, ButtonPress, ButtonPressMask, &handle_buttonpress, &wrap);
+	mlx_hook(wrap.mlx_win, ButtonRelease, ButtonReleaseMask, &handle_buttonrelease, &wrap);
+	mlx_hook(wrap.mlx_win, MotionNotify, PointerMotionMask, &handle_motion, &wrap);
 	wrap.auto_mode = false;
 	mlx_loop_hook(wrap.mlx_ptr, (int (*)(void *))auto_loop_hook, &wrap);
 	wrap.data.img = mlx_new_image(wrap.mlx_ptr, wrap.window_width, wrap.window_height);

@@ -70,6 +70,7 @@ typedef struct s_wrap {
 	bool   heatmap;
 	int	   offset_x;
 	int	   offset_y;
+	bool   left_button;
 } t_wrap;
 
 typedef enum e_keycode {
@@ -99,7 +100,9 @@ void update_img(t_wrap *wrap);
 int	 full_quit(t_wrap *wrap);
 int	 handle_keypress(int keycode, t_wrap *wrap);
 int	 handle_keyrelease(int keycode, t_wrap *wrap);
-int	 handle_mouse_event(int keycode, int x, int y, t_wrap *wrap);
+int	 handle_buttonpress(int keycode, int x, int y, t_wrap *wrap);
+int	 handle_buttonrelease(int keycode, int x, int y, t_wrap *wrap);
+int	 handle_motion(int x, int y, t_wrap *wrap);
 void get_grid_size(t_wrap *wrap, int *height, int *width);
 void get_offsets(t_wrap *wrap, int height, int width, int *offsetX, int *offsetY);
 void draw_grid(t_wrap *wrap);

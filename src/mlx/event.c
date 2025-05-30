@@ -95,15 +95,49 @@ void switch_cell(t_wrap *wrap, t_point cell) {
 	update_img(wrap);
 }
 
-int handle_mouse_event(int keycode, int x, int y, t_wrap *wrap) {
-	t_point cell;
-	if (keycode != 1)
+/*int handle_mouse_event(int keycode, int x, int y, t_wrap *wrap) {*/
+/*t_point cell;*/
+/*	if (keycode != 1)*/
+/*		return (0);*/
+/*	if (!is_in_grid(wrap, x, y)) {*/
+/*		return (0);*/
+/*	}*/
+/*	get_cell_pos(wrap, x, y, &cell);*/
+/*	switch_cell(wrap, cell);*/
+/*	(void)wrap;*/
+/*	return (0);*/
+/*}*/
+
+int handle_buttonpress(int keycode, int x, int y, t_wrap *wrap) {
+	if (keycode == 1)
+		wrap->left_button = true;
+	(void)x;
+	(void)y;
+	return (0);
+}
+
+int handle_buttonrelease(int keycode, int x, int y, t_wrap *wrap) {
+	if (keycode == 1)
+		wrap->left_button = false;
+	(void)x;
+	(void)y;
+	return (0);
+}
+
+int handle_motion(int x, int y, t_wrap *wrap) {
+	static t_point last_cell = {0, 0};
+	t_point		   cell;
+	if (!wrap->left_button)
 		return (0);
 	if (!is_in_grid(wrap, x, y)) {
 		return (0);
 	}
 	get_cell_pos(wrap, x, y, &cell);
+	if (last_cell.x == cell.x && last_cell.y == cell.y)
+		return (0);
 	switch_cell(wrap, cell);
+	last_cell.x = cell.x;
+	last_cell.y = cell.y;
 	(void)wrap;
 	return (0);
 }
